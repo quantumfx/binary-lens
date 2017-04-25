@@ -1,0 +1,7 @@
+error tolerance 0.0001
+number is samples between -1 lambda to +1 lambda. sample size scaled such that this number
+is conserved when integrating [-k_int, k_int]. By optimal I mean value settles (by eye).
+k_int = 93 with 1000, error = 1e-5, optimal after ~30
+k_int = 52 with 2000, error = 6e-6, optimal after ~30
+k_int = 62 with 3000, error = 8e-5, optimal after ~30
+k_int = 31 with 10000, error = 3e-5, optimal after ~30?
