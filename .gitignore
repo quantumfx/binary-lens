@@ -1,5 +1,7 @@
 *debuglog.txt
-data/*
+.DS_Store
+data/*Mag*
+data/*Spec*
 *.o*
 *.e*
 
