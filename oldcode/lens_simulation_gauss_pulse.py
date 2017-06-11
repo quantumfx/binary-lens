@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 import scipy.interpolate as inter
 from scipy.optimize import curve_fit
 from time import time
-get_ipython().magic('matplotlib inline')
+#get_ipython().magic('matplotlib inline')
 
 
 # Function definitions and some other parameters
@@ -241,18 +241,18 @@ print 'Integration range', ipulsar, "+-", lim
 print 'Integration range', ipulsar*intime*1e3, "+-", lim*intime*1e3, 'ms'
 print 'Integration range in y +-', tau_geom(lim*intime, ipulsar*intime)*1e6, 'us'
 
-tick = time()
+#tick = time()
 
-for i in int_domain:
-    E_tot += delay_field(i)
-    E_tot_flat += delay_field_flat(i)
+#for i in int_domain:
+#    E_tot += delay_field(i)
+#    E_tot_flat += delay_field_flat(i)
 
-print 'Time elapsed:', time() - tick, 's'
+#print 'Time elapsed:', time() - tick, 's'
 
 
 # In[737]:
 
-print np.amax(np.abs(E_field_ref)), np.amax(np.abs(E_tot))
+#print np.amax(np.abs(E_field_ref)), np.amax(np.abs(E_tot))
 
 
 # In[721]:
@@ -262,16 +262,17 @@ print np.amax(np.abs(E_field_ref)), np.amax(np.abs(E_tot))
 
 # The if is required apparently so we don't get an infinite loop (in Windows in particular)
 
-#import multiprocessing
-#E_tot = np.zeros(n, dtype=np.complex128)
-#if __name__ == '__main__':
-#    pool = multiprocessing.Pool()
-#    print multiprocessing.cpu_count()
-#    currenttime = time()
-#    E_tot = sum(pool.imap_unordered(delay_field, ((i) for i in int_domain), chunksize=int_domain.size/16))
-#    print 'Time elapsed:', time() - currenttime
-#    pool.close()
-#    pool.join()
+import multiprocessing
+E_tot = np.zeros(n, dtype=np.complex128)
+if __name__ == '__main__':
+    pool = multiprocessing.Pool()
+    print multiprocessing.cpu_count()
+    currenttime = time()
+    E_tot = sum(pool.imap_unordered(delay_field, ((i) for i in int_domain), chunksize=int_domain.size/16))
+    E_tot_flat = sum(pool.imap_unordered(delay_field_flat, ((i) for i in int_domain), chunksize=int_domain.size/16))
+    print 'Time elapsed:', time() - currenttime
+    pool.close()
+    pool.join()
 
 
 

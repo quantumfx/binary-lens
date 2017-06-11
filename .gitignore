@@ -1,4 +1,7 @@
 *debuglog.txt
+data/*
+*.o*
+*.e*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
