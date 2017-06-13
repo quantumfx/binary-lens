@@ -92,7 +92,8 @@ def DisPath():
     z = z*amp/np.max(np.abs(z))
     return z
 
-dispath = DisPath()
+
+dispath = np.empty( len(DisPath()) )
 if rank == 0:
     #dispath = DisPath()
     dispath = np.load('data/test2Dis.npy')
@@ -112,27 +113,28 @@ def GeoPath(center):
     gp = m*(np.arange(-dens*100,+dens*100+1)-center)**2
     return gp
 
-s = Signal()
+s = np.empty( len(Signal()) )
+if rank == 0:
+    s = Signal()
 comm.Bcast(s, root=0)
 s = s[24000:27000]
 sf = np.fft.rfft(s)
 l = len(sf)
 
-gp = GeoPath(0)
-PA = PhaseArray(l,gp,gp*0,fmin)
-PI = PathInt(PA)
-s1 = np.fft.irfft(sf*PI)
-s2 = sf*PI
-norm = (s1**2).sum()
+gp_norm = GeoPath(0)
+PA_norm = PhaseArray(l,gp_norm,gp_norm*0,fmin)
+PI_norm = PathInt(PA_norm)
+s1_norm = np.fft.irfft(sf*PI_norm)
+norm = (s1_norm**2).sum()
 
 if rank == 0:
-    np.save(FileName+"Geo",gp)
+    np.save(FileName+"Geo",gp_norm)
     np.save(FileName+"Dis",dispath)
     np.save(FileName+"Freqs",freqs)
-    np.save(FileName+"UnlensedSpec",s2)
+    np.save(FileName+"UnlensedSpec",sf*PI_norm)
 
 if rank == 0:
-    scantemp = np.arange(len(gp)-1, len(dispath) - (len(gp)-1), (len(dispath)-2*(len(gp)-1)) // ( size//len(freqs) ) )
+    scantemp = np.arange(len(gp_norm)-1, len(dispath) - (len(gp_norm)-1), (len(dispath)-2*(len(gp_norm)-1)) // ( size//len(freqs) ) )
     np.save(FileName+"Scan",scantemp)
     diff = scantemp[1] - scantemp[0]
     print scantemp, diff
@@ -154,4 +156,4 @@ diff = int(diff)
 # each processor will only process diff points for one particular frequency
 mag, spec = Scan(scan,scan+diff,freqs[rank%len(freqs)])
 np.save(FileName + format(freqs[rank%3]/10**6, '.2f') + "Mag"+format(scan, '04') + "to" + format(scan+diff, '04'),mag)
-#np.save(FileName + format(freqs[rank%3]/10**6, '.2f') + "Spec"+format(scan, '04') + "to" + format(scan+diff, '04'),spec)
+np.save(FileName + format(freqs[rank%3]/10**6, '.2f') + "Spec"+format(scan, '04') + "to" + format(scan+diff, '04'),spec)
