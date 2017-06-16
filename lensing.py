@@ -108,9 +108,6 @@ temp = np.fft.irfft(temp)
 temp *= dens
 dispath = temp
 
-#look at a particular caustic
-dispath = dispath[2000-400:2800+400]
-
 slope = np.max(np.abs(np.gradient(dispath)))
 m = 1.1*slope/(dens*200)
 def GeoPath(center):
@@ -131,6 +128,9 @@ PI_norm = PathInt(PA_norm)
 s1_norm = np.fft.irfft(sf*PI_norm)
 norm = (s1_norm**2).sum()
 
+#look at a particular caustic
+dispath = dispath[2000-400:2800+400]
+
 if rank == 0:
     np.save(FileName+"Geo",gp_norm)
     np.save(FileName+"Dis",dispath)
@@ -138,6 +138,7 @@ if rank == 0:
     np.save(FileName+"UnlensedSpec",sf*PI_norm)
 
 if rank == 0:
+    #scantemp = np.arange(len(gp_norm)-1, len(dispath) - (len(gp_norm)-1), (len(dispath)-2*(len(gp_norm)-1)) // ( size//len(freqs) ) )
     scantemp = np.arange(len(gp_norm)-1, len(dispath) - (len(gp_norm)-1), (len(dispath)-2*(len(gp_norm)-1)) // ( size//len(freqs) ) )
     np.save(FileName+"Scan",scantemp)
     diff = scantemp[1] - scantemp[0]
