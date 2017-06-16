@@ -10,14 +10,14 @@ rank = comm.Get_rank()
 
 fmin = 311.25*10**6 #Hz
 fban = 16*10**6 #Hz
-freqs = [fmin + i*fban for i in range(3)]
+freqs = [fmin + i*fban for i in range(6)]
 fsample = 2*fban
 Period = 1.6*10**(-3) #seconds
 PulseWidth = Period/200
 
 fref = fmin#Hz
 
-FileName = "data/test2_parallel_"
+FileName = "data/test2_caustic_"
 
 # This generates the signal time series. It's some gaussian envelope * random values between +-0.5
 def Signal(width=PulseWidth*fsample, length=int(Period*fsample), Noise=0):
@@ -65,7 +65,8 @@ def FindIntRange(TotPath):
 
 def Scan(begin, end, freq):
     scan = range(begin,end)
-    res = np.linspace(-1/3,1/3,3,endpoint='true')
+    res = np.linspace(-1/2,1/2,6,endpoint='true')[:-1]
+    #res = np.linspace(-1/3,1/3,3,endpoint='true')
     lensed = []
     spec = []
     for i in scan:
@@ -106,6 +107,9 @@ temp = np.concatenate((temp,np.zeros( (dens-1)*1000)))
 temp = np.fft.irfft(temp)
 temp *= dens
 dispath = temp
+
+#look at a particular caustic
+dispath = dispath[2000-400:2800+400]
 
 slope = np.max(np.abs(np.gradient(dispath)))
 m = 1.1*slope/(dens*200)
