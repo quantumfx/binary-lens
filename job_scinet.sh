@@ -9,4 +9,4 @@ module load intel/15.0.2 intelmpi python/2.7.8
 cd $PBS_O_WORKDIR
  
 # EXECUTION COMMAND; -np = nodes*ppn
-mpirun -np 192 python lensing.py
+mpirun -np 192 python lensing.py 1> error.txt 2> out.txt

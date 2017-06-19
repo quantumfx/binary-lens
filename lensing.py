@@ -129,7 +129,7 @@ s1_norm = np.fft.irfft(sf*PI_norm)
 norm = (s1_norm**2).sum()
 
 #look at a particular caustic
-dispath = dispath[2000-400:2800+400]
+dispath = dispath[2400-400:3200+400]
 
 if rank == 0:
     np.save(FileName+"Geo",gp_norm)
