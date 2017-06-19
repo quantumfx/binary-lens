@@ -140,7 +140,6 @@ if rank == 0:
 if rank == 0:
     #scantemp = np.arange(len(gp_norm)-1, len(dispath) - (len(gp_norm)-1), (len(dispath)-2*(len(gp_norm)-1)) // ( size//len(freqs) ) )
     scantemp = np.arange(len(gp_norm)-1, len(dispath) - (len(gp_norm)-1), (len(dispath)-2*(len(gp_norm)-1)) // ( size//len(freqs) ) )
-    print scantemp
     np.save(FileName+"Scan",scantemp)
     diff = scantemp[1] - scantemp[0]
     print scantemp, diff
