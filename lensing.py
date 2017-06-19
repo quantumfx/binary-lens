@@ -129,7 +129,7 @@ s1_norm = np.fft.irfft(sf*PI_norm)
 norm = (s1_norm**2).sum()
 
 #look at a particular caustic
-dispath = dispath[2400-400:3200+400]
+dispath = dispath[2400-800:3200+800]
 
 if rank == 0:
     np.save(FileName+"Geo",gp_norm)
@@ -140,6 +140,7 @@ if rank == 0:
 if rank == 0:
     #scantemp = np.arange(len(gp_norm)-1, len(dispath) - (len(gp_norm)-1), (len(dispath)-2*(len(gp_norm)-1)) // ( size//len(freqs) ) )
     scantemp = np.arange(len(gp_norm)-1, len(dispath) - (len(gp_norm)-1), (len(dispath)-2*(len(gp_norm)-1)) // ( size//len(freqs) ) )
+    print scantemp
     np.save(FileName+"Scan",scantemp)
     diff = scantemp[1] - scantemp[0]
     print scantemp, diff
@@ -160,5 +161,5 @@ diff = int(diff)
 
 # each processor will only process diff points for one particular frequency
 mag, spec = Scan(scan,scan+diff,freqs[rank%len(freqs)])
-np.save(FileName + format(freqs[rank%3]/10**6, '.2f') + "Mag"+format(scan, '04') + "to" + format(scan+diff, '04'),mag)
-np.save(FileName + format(freqs[rank%3]/10**6, '.2f') + "Spec"+format(scan, '04') + "to" + format(scan+diff, '04'),spec)
+np.save(FileName + format(freqs[rank%len(freqs)]/10**6, '.2f') + "Mag"+format(scan, '04') + "to" + format(scan+diff, '04'),mag)
+np.save(FileName + format(freqs[rank%len(freqs)]/10**6, '.2f') + "Spec"+format(scan, '04') + "to" + format(scan+diff, '04'),spec)
