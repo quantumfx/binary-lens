@@ -3,14 +3,17 @@ import numpy as np
 import matplotlib.pylab as plt
 import time
 from mpi4py import MPI
+import sys
 
 comm = MPI.COMM_WORLD
 size = comm.Get_size()
 rank = comm.Get_rank()
 
+
 fmin = 311.25*10**6 #Hz
 fban = 16*10**6 #Hz
-freqs = [fmin + i*fban for i in range(1)]
+nfreq = int(sys.argv[-1]) # which frequency band above 311.25 to scan 
+freq = fmin + nfreq * fban
 fsample = 2*fban
 Period = 1.6*10**(-3) #seconds
 PulseWidth = Period/200
@@ -82,24 +85,6 @@ def Scan(begin, end, freq):
         print freq/10**6, i, begin, end, time.clock()
     return np.array(lensed)/norm, np.array(spec)
 
-def ScanPt(loc, freq):
-    #scan = range(begin,end)
-    res = np.linspace(-1/2,1/2,6,endpoint='true')[:-1]
-    #res = np.linspace(-1/3,1/3,3,endpoint='true')
-    lensed = []
-    spec = []
-    dp = dispath[loc-(dens*100):loc+(dens*100+1)]
-    for j in res:
-        gp = GeoPath(j)
-        PA = PhaseArray(l,gp,dp,freq)
-        PI = PathInt(PA)
-        s1 = np.fft.irfft(sf*PI)
-        # save intensity as well as spectrum
-        lensed += [(s1**2).sum()]
-        spec += sf*PI
-    print freq/10**6, i, begin, end, time.clock()
-return np.array(lensed)/norm, np.array(spec)
-
 def DisPath():
     x = np.random.rand(10)*2-1
     y = np.random.rand(10)*2-1
@@ -110,7 +95,6 @@ def DisPath():
     amp = 4*10**(-6)
     z = z*amp/np.max(np.abs(z))
     return z
-
 
 dispath = np.empty( len(DisPath()) )
 if rank == 0:
@@ -152,21 +136,20 @@ dispath = dispath[2400-800:3200+800]
 if rank == 0:
     np.save(FileName+"Geo",gp_norm)
     np.save(FileName+"Dis",dispath)
-    np.save(FileName+"Freqs",freqs)
+    #np.save(FileName+"Freqs",freqs)
     np.save(FileName+"UnlensedSpec",sf*PI_norm)
 
 if rank == 0:
-    #scantemp = np.arange(len(gp_norm)-1, len(dispath) - (len(gp_norm)-1), (len(dispath)-2*(len(gp_norm)-1)) // ( size//len(freqs) ) )
-    scantemp = np.arange(len(gp_norm)-1, len(dispath) - (len(gp_norm)-1), (len(dispath)-2*(len(gp_norm)-1)) // ( size//len(freqs) ) )
-    np.save(FileName+"Scan",scantemp)
-    diff = scantemp[1] - scantemp[0]
-    print scantemp, diff
-    scan = []
+    scan = np.arange(len(gp_norm)-1, len(dispath) - (len(gp_norm)-1), (len(dispath)-2*(len(gp_norm)-1)) // size )
+    np.save(FileName+"Scan",scan)
+    diff = scan[1] - scan[0]
+    print scan, diff
+    # scan = []
 
     # useful for MPI scattering routine
-    for i in range(len(freqs)):
-        scan = np.append(scan,scantemp)
-    print scan
+    # for i in range(len(freqs)):
+    #     scan = np.append(scan,scantemp)
+    # print scan
 else:
     scan = None
     diff = None
@@ -176,7 +159,16 @@ diff = comm.bcast(diff, root=0)
 scan = int(scan)
 diff = int(diff)
 
+
 # each processor will only process diff points for one particular frequency
-mag, spec = Scan(scan,scan+diff,freqs[rank%len(freqs)])
-np.save(FileName + format(freqs[rank%len(freqs)]/10**6, '.2f') + "Mag"+format(scan, '04') + "to" + format(scan+diff, '04'),mag)
-np.save(FileName + format(freqs[rank%len(freqs)]/10**6, '.2f') + "Spec"+format(scan, '04') + "to" + format(scan+diff, '04'),spec)
+mag, spec = Scan(scan,scan+diff,freq)
+comm.Barrier()
+
+if rank == 0 :
+    magGathered = np.zeros(len(mag) * size)
+else:
+    magGathered = None
+
+comm.Gather(mag, magGathered, root=0)
+np.save(FileName + format(freq/10**6, '.2f') + "Mag", magGathered)
+#np.save(FileName + format(freq/10**6, '.2f') + "Spec"+format(scan, '04') + "to" + format(scan+diff, '04'),spec)
