@@ -1,5 +1,5 @@
 #!/bin/bash
-#PBS -l nodes=24:ppn=8,walltime=1:30:00
+#PBS -l nodes=10:ppn=8,walltime=1:30:00
 #PBS -N test2_caustic
  
 # load modules (must match modules used for compilation)
@@ -9,4 +9,6 @@ module load intel/15.0.2 intelmpi python/2.7.8
 cd $PBS_O_WORKDIR
  
 # EXECUTION COMMAND; -np = nodes*ppn
-mpirun -np 192 python lensing.py 1> out.txt 2> error.txt
+# Frequency band is 311.25MHz + 16MHz * NFREQ
+NFREQ = 0
+mpirun -np 80 python lensing.py $NFREQ #1> out.txt 2> error.txt
