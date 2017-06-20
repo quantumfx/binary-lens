@@ -144,12 +144,6 @@ if rank == 0:
     np.save(FileName+"Scan",scan)
     diff = scan[1] - scan[0]
     print scan, diff
-    # scan = []
-
-    # useful for MPI scattering routine
-    # for i in range(len(freqs)):
-    #     scan = np.append(scan,scantemp)
-    # print scan
 else:
     scan = None
     diff = None
@@ -159,16 +153,19 @@ diff = comm.bcast(diff, root=0)
 scan = int(scan)
 diff = int(diff)
 
-
 # each processor will only process diff points for one particular frequency
 mag, spec = Scan(scan,scan+diff,freq)
 comm.Barrier()
+
+print "process", rank, "has", mag
 
 if rank == 0 :
     magGathered = np.zeros(len(mag) * size)
 else:
     magGathered = None
 
-comm.Gatherv(mag, [magGathered, np.ones(len(mag)), np.arange(size)*len(mag), MPI.DOUBLE], root=0)
+comm.Gatherv(mag, [magGathered, np.ones(size)*len(mag), np.arange(size)*len(mag), MPI.DOUBLE])
+
 np.save(FileName + format(freq/10**6, '.2f') + "Mag", magGathered)
+np.save(FileName + format(freq/10**6, '.2f') + "Mag"+format(scan, '04') + "to" + format(scan+diff, '04'),mag)
 #np.save(FileName + format(freq/10**6, '.2f') + "Spec"+format(scan, '04') + "to" + format(scan+diff, '04'),spec)
