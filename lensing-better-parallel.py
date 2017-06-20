@@ -12,7 +12,7 @@ rank = comm.Get_rank()
 
 fmin = 311.25*10**6 #Hz
 fban = 16*10**6 #Hz
-nfreq = int(sys.argv[-1]) # which frequency band above 311.25 to scan 
+nfreq = int(sys.argv[1]) # which frequency band above 311.25 to scan 
 freq = fmin + nfreq * fban
 fsample = 2*fban
 Period = 1.6*10**(-3) #seconds
@@ -169,6 +169,6 @@ if rank == 0 :
 else:
     magGathered = None
 
-comm.Gather(mag, magGathered, root=0)
+comm.Gatherv(mag, [magGathered, np.ones(len(mag)), np.arange(size)*len(mag), MPI.DOUBLE], root=0)
 np.save(FileName + format(freq/10**6, '.2f') + "Mag", magGathered)
 #np.save(FileName + format(freq/10**6, '.2f') + "Spec"+format(scan, '04') + "to" + format(scan+diff, '04'),spec)
