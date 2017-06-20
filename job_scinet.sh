@@ -10,5 +10,4 @@ cd $PBS_O_WORKDIR
  
 # EXECUTION COMMAND; -np = nodes*ppn
 # Frequency band is 311.25MHz + 16MHz * NFREQ
-NFREQ = 0
-mpirun -np 80 python lensing.py $NFREQ #1> out.txt 2> error.txt
+mpirun -np 80 python lensing.py 7 #1> out.txt 2> error.txt

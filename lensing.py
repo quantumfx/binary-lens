@@ -110,12 +110,12 @@ def GeoPath(center):
     gp = m*(np.arange(-dens*100,+dens*100+1)-center)**2
     return gp
 
-s = np.empty( len(Signal()) )
-if rank == 0:
-    #s = Signal()
-    s = np.load('data/signal.npy')
-comm.Bcast(s, root=0)
-s = s[24000:27000]
+#s = np.empty( len(Signal()) )
+#if rank == 0:
+#    s = Signal()
+#comm.Bcast(s, root=0)
+#s = s[24000:27000]
+s = np.load('data/signal.npy')
 sf = np.fft.rfft(s)
 l = len(sf)
 
