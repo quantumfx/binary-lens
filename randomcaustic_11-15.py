@@ -161,7 +161,7 @@ diff = int(diff)
 #comm.Gatherv(mag, [magGathered, np.ones(size)*len(mag), np.arange(size)*len(mag), MPI.DOUBLE])
 
 #np.save(FileName + format(freq/10**6, '.2f') + "Mag", magGathered)
-for i in range(1,6):
+for i in range(11,16):
     dispath = np.load('data/causticDis'+format(i, '02')+'.npy')
 
     mag, spec = Scan(scan,scan+diff,freq)
