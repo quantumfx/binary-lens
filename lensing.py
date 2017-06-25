@@ -94,11 +94,12 @@ def DisPath():
     z = z*amp/np.max(np.abs(z))
     return z
 
-dispath = np.empty( len(DisPath()) )
-if rank == 0:
+#dispath = np.empty( len(DisPath()) )
+#if rank == 0:
     #dispath = DisPath()
-    dispath = np.load('data/test_physical_Dis.npy')
-comm.Bcast(dispath, root=0)
+    #dispath = np.load('data/test_physical_Dis.npy')
+#comm.Bcast(dispath, root=0)
+dispath = np.load('data/physicalDis.npy')
 
 #increasing density
 dens = 4
@@ -108,6 +109,7 @@ temp = np.fft.irfft(temp)
 temp *= dens
 dispath = temp
 
+print len(dispath)
 # slope = np.max(np.abs(np.gradient(dispath)))
 # m = 1.1*slope/(dens*200)
 # def GeoPath(center):
