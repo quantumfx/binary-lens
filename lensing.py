@@ -16,10 +16,14 @@ freq = fmin + nfreq * fban
 fsample = 2*fban
 Period = 1.6*10**(-3) #seconds
 PulseWidth = Period/200
+R = 6.273 #s
+intime = 32/8000
+insample = 8000/32
+
 
 fref = fmin#Hz
 
-FileName = "data/test2_caustic_"
+FileName = "data/test_physical_"
 
 # This generates the signal time series. It's some gaussian envelope * random values between +-0.5
 def Signal(width=PulseWidth*fsample, length=int(Period*fsample), Noise=0):
@@ -63,11 +67,11 @@ def FindIntRange(TotPath):
 
 def Scan(begin, end, freq):
     scan = range(begin,end)
-    res = np.linspace(-1/2,1/2,10,endpoint='true')[:-1]
+    res = np.linspace(-1/2,1/2,3,endpoint='true')[:-1]
     lensed = []
     spec = []
     for i in scan:
-        dp = dispath[i-(dens*100):i+(dens*100+1)]
+        dp = dispath[i-(dens*500):i+(dens*500+1)]
         for j in res:
             gp = GeoPath(j)
             PA = PhaseArray(l,gp,dp,freq)
@@ -80,10 +84,10 @@ def Scan(begin, end, freq):
     return np.array(lensed)/norm, np.array(spec)
 
 def DisPath():
-    x = np.random.rand(10)*2-1
-    y = np.random.rand(10)*2-1
+    x = np.random.rand(20)*2-1
+    y = np.random.rand(20)*2-1
     z = (1+0j)*x + (0+1j)*y
-    q = np.array([0]*991)
+    q = np.array([0]*1981)
     z = np.concatenate((z,q))
     z = np.fft.irfft(z)
     amp = 4*10**(-6)
@@ -92,22 +96,27 @@ def DisPath():
 
 dispath = np.empty( len(DisPath()) )
 if rank == 0:
-    #dispath = DisPath()
-    dispath = np.load('data/test2Dis.npy')
+    dispath = DisPath()
+    #dispath = np.load('data/test2Dis.npy')
 comm.Bcast(dispath, root=0)
 
 #increasing density
 dens = 4
 temp = np.fft.rfft(dispath)
-temp = np.concatenate((temp,np.zeros( (dens-1)*1000)))
+temp = np.concatenate((temp,np.zeros( (dens-1)*2000)))
 temp = np.fft.irfft(temp)
 temp *= dens
 dispath = temp
 
-slope = np.max(np.abs(np.gradient(dispath)))
-m = 1.1*slope/(dens*200)
+# slope = np.max(np.abs(np.gradient(dispath)))
+# m = 1.1*slope/(dens*200)
+# def GeoPath(center):
+#     gp = m*(np.arange(-dens*100,+dens*100+1)-center)**2
+#     return gp
+
+#Physical parameters
 def GeoPath(center):
-    gp = m*(np.arange(-dens*100,+dens*100+1)-center)**2
+    gp = 1/(2*R) * ((np.arange(-dens*500,+dens*500+1)-center) * intime *358e3/3e8 )**2
     return gp
 
 #s = np.empty( len(Signal()) )
@@ -126,7 +135,7 @@ s1 = np.fft.irfft(sf*PI)
 norm = (s1**2).sum()
 
 #look at a particular caustic
-dispath = dispath[2400-800:3200+800]
+#dispath = dispath[2400-800:3200+800]
 
 if rank == 0:
     np.save(FileName+"Geo",gp)
@@ -135,7 +144,7 @@ if rank == 0:
     np.save(FileName+"UnlensedSpec",sf*PI)
 
 if rank == 0:
-    scan = np.arange(len(gp)-1, len(dispath) - (len(gp)-1), (len(dispath)-2*(len(gp)-1)) // size )
+    scan = np.arange((len(gp)-1)/2, len(dispath) - (len(gp)-1)/2, (len(dispath)-2*(len(gp)-1)) // size )
     np.save(FileName+"Scan",scan)
     diff = scan[1] - scan[0]
     print scan, diff
