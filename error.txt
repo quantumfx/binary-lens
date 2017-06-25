@@ -1,0 +1,9 @@
+Traceback (most recent call last):
+  File "lensing.py", line 101, in <module>
+    comm.Bcast(dispath, root=0)
+  File "Comm.pyx", line 406, in mpi4py.MPI.Comm.Bcast (src/mpi4py.MPI.c:50222)
+mpi4py.MPI.Exception: Other MPI error, error stack:
+PMPI_Bcast(2112)........: MPI_Bcast(buf=0x1500790, count=4000, MPI_DOUBLE, root=0, MPI_COMM_WORLD) failed
+MPIR_Bcast_impl(1670)...: 
+I_MPIR_Bcast_intra(1887): Failure during collective
+MPIR_Bcast_intra(1524)..: Failure during collective
