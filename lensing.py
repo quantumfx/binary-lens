@@ -23,7 +23,7 @@ insample = 8000/32
 
 fref = fmin#Hz
 
-FileName = "data/test_physical_"
+FileName = "data/physical_"
 
 # This generates the signal time series. It's some gaussian envelope * random values between +-0.5
 def Signal(width=PulseWidth*fsample, length=int(Period*fsample), Noise=0):
@@ -96,8 +96,8 @@ def DisPath():
 
 dispath = np.empty( len(DisPath()) )
 if rank == 0:
-    dispath = DisPath()
-    #dispath = np.load('data/test2Dis.npy')
+    #dispath = DisPath()
+    dispath = np.load('data/test_physical_Dis.npy')
 comm.Bcast(dispath, root=0)
 
 #increasing density
@@ -144,7 +144,7 @@ if rank == 0:
     np.save(FileName+"UnlensedSpec",sf*PI)
 
 if rank == 0:
-    scan = np.arange((len(gp)-1)/2, len(dispath) - (len(gp)-1)/2, (len(dispath)-2*(len(gp)-1)) // size )
+    scan = np.arange((len(gp)-1)/2, len(dispath) - (len(gp)-1)/2, (len(dispath)-(len(gp)-1)) // size )
     np.save(FileName+"Scan",scan)
     diff = scan[1] - scan[0]
     print scan, diff

@@ -1,6 +1,6 @@
 #!/bin/bash
-#PBS -l nodes=1:ppn=8,walltime=4:00:00
-#PBS -N test2_caustic
+#PBS -l nodes=10:ppn=8,walltime=2:00:00
+#PBS -N test_physical
  
 # load modules (must match modules used for compilation)
 module load intel/15.0.2 intelmpi python/2.7.8
@@ -10,4 +10,4 @@ cd $PBS_O_WORKDIR
  
 # EXECUTION COMMAND; -np = nodes*ppn
 # Frequency band is 311.25MHz + 16MHz * NFREQ
-mpirun -np 8 python "randomcaustic_11-16.py" 4 #1> out.txt 2> error.txt
+mpirun -np 80 python lensing.py 0 1> out.txt 2> error.txt
