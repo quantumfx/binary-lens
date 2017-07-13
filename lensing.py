@@ -23,7 +23,7 @@ insample = 8000/32
 
 fref = fmin#Hz
 
-FileName = "data/physical_"
+FileName = "data/data_dis_avgdm_"
 
 # This generates the signal time series. It's some gaussian envelope * random values between +-0.5
 def Signal(width=PulseWidth*fsample, length=int(Period*fsample), Noise=0):
@@ -99,17 +99,17 @@ def DisPath():
     #dispath = DisPath()
     #dispath = np.load('data/test_physical_Dis.npy')
 #comm.Bcast(dispath, root=0)
-dispath = np.load('data/physicalDis.npy')
+dispath = np.load('data/dataDis_avgdm.npy')
+dispath = dispath/10**6
 
 #increasing density
 dens = 4
-temp = np.fft.rfft(dispath)
-temp = np.concatenate((temp,np.zeros( (dens-1)*2000)))
-temp = np.fft.irfft(temp)
-temp *= dens
-dispath = temp
+#temp = np.fft.rfft(dispath)
+#temp = np.concatenate((temp,np.zeros( (dens-1)*2000)))
+#temp = np.fft.irfft(temp)
+#temp *= dens
+#dispath = temp
 
-print len(dispath)
 # slope = np.max(np.abs(np.gradient(dispath)))
 # m = 1.1*slope/(dens*200)
 # def GeoPath(center):
@@ -173,5 +173,5 @@ mag, spec = Scan(scan,scan+diff,freq)
 #comm.Gatherv(mag, [magGathered, np.ones(size)*len(mag), np.arange(size)*len(mag), MPI.DOUBLE])
 
 #np.save(FileName + format(freq/10**6, '.2f') + "Mag", magGathered)
-np.save(FileName + format(freq/10**6, '.2f') + "Mag"+format(scan, '04') + "to" + format(scan+diff, '04'),mag)
-np.save(FileName + format(freq/10**6, '.2f') + "Spec"+format(scan, '04') + "to" + format(scan+diff, '04'),spec)
+np.save(FileName + format(freq/10**6, '.2f') + "Mag"+format(scan, '05') + "to" + format(scan+diff, '05'),mag)
+np.save(FileName + format(freq/10**6, '.2f') + "Spec"+format(scan, '05') + "to" + format(scan+diff, '05'),spec)
