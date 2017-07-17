@@ -1,6 +1,6 @@
 #!/bin/bash
 #PBS -l nodes=30:ppn=8,walltime=2:00:00
-#PBS -N lensing_data_dis_avgdm
+#PBS -N lensing
  
 # load modules (must match modules used for compilation)
 module load intel/15.0.2 intelmpi python/2.7.8
@@ -9,5 +9,5 @@ module load intel/15.0.2 intelmpi python/2.7.8
 cd $PBS_O_WORKDIR
  
 # EXECUTION COMMAND; -np = nodes*ppn
-# Frequency band is 311.25MHz + 16MHz * NFREQ
-mpirun -np 240 python "lensing.py" -1 1> out.txt 2> error.txt
+# Frequency band is 311.25MHz to 311.25MHZ+16MHz*NFREQ, where NFREQ is the number after "lensing.py"
+mpirun -np 240 python "lensing.py" 0 #1> out.txt 2> error.txt
