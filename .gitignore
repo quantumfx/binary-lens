@@ -4,6 +4,8 @@ data/*Mag*
 data/*Spec*
 *.o*
 *.e*
+error.txt
+out.txt
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
