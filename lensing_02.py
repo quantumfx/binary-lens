@@ -24,7 +24,7 @@ fref = fmin #Hz
 intime = 32/8000 # second/point
 
 # Output prefix
-FileName = "data/constrained_01_"
+FileName = "data/constrained_0.2Hz_freqcut_"
 
 # Generates signal
 def Signal(width=PulseWidth*fsample, length=int(Period*fsample), Noise=0):
@@ -102,7 +102,7 @@ def DisPath():
 dispath = np.empty( 4*len(DisPath()) )
 if rank == 0:
     #dispath = DisPath()
-    dispath = np.load('data/dm_constrained_01.npy')
+    dispath = np.load('data/constrained_0.2Hz.npy')
 comm.Bcast(dispath, root=0)
 
 #increasing density, do this if you're generating a new dispath
