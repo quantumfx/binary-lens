@@ -1,7 +1,7 @@
 from __future__ import division
 import numpy as np
 #import matplotlib.pylab as plt
-#import time
+import time
 from mpi4py import MPI
 import sys
 
