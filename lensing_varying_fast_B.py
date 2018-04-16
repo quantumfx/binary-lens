@@ -24,7 +24,7 @@ fref = fmin #Hz
 intime = 32/8000 # second/point
 
 # Output prefix
-FileName = "data/constrained_01_"
+FileName = "data/B_varying_fast_v2_"
 
 # Generates signal
 def Signal(width=PulseWidth*fsample, length=int(Period*fsample), Noise=0):
@@ -38,11 +38,14 @@ def Signal(width=PulseWidth*fsample, length=int(Period*fsample), Noise=0):
 def PhaseArray(SignalBand, GeoPath, DisPath, Freq):
     LG = len(GeoPath)
     LD = len(DisPath)
+    B = 0.1*np.sin(2*np.pi*np.linspace(0,LD/267,LD)*10)
     if LG > LD:
         DisPath = np.pad(DisPath,int((LG-LD)/2)+1,'edge')
         DisPath = DisPath[:LG]
+        B = np.pad(B,int((LG-LD)/2)+1,'edge')
+        B = B[:LG]
     w = Freq + np.array(range(SignalBand))*fban/SignalBand # frequency array, of size fourier transform of signal
-    PA = np.outer(w,GeoPath) - np.outer(((fref**2)/w),DisPath)
+    PA = np.outer(w,GeoPath) - ( np.outer((fref**2)/w ,DisPath) + np.outer(fref**2/w**2*2.8e6,DisPath*B) )# B field contribution
     return PA
 
 def PhaseFactor(PV):
@@ -102,7 +105,7 @@ def DisPath():
 dispath = np.empty( 4*len(DisPath()) )
 if rank == 0:
     #dispath = DisPath()
-    dispath = np.load('data/dm_constrained_01.npy')
+    dispath = np.load('data/powerlaw_2_cutoff_0.1Hz_absDM.npy')
 comm.Bcast(dispath, root=0)
 
 #increasing density, do this if you're generating a new dispath

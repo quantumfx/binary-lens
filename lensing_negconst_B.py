@@ -24,7 +24,7 @@ fref = fmin #Hz
 intime = 32/8000 # second/point
 
 # Output prefix
-FileName = "data/constrained_0.4Hz_freqcut_"
+FileName = "data/B_const_neg_v3_"
 
 # Generates signal
 def Signal(width=PulseWidth*fsample, length=int(Period*fsample), Noise=0):
@@ -42,7 +42,7 @@ def PhaseArray(SignalBand, GeoPath, DisPath, Freq):
         DisPath = np.pad(DisPath,int((LG-LD)/2)+1,'edge')
         DisPath = DisPath[:LG]
     w = Freq + np.array(range(SignalBand))*fban/SignalBand # frequency array, of size fourier transform of signal
-    PA = np.outer(w,GeoPath) - np.outer(((fref**2)/w),DisPath)
+    PA = np.outer(w,GeoPath) - np.outer(((fref**2)/w - fref**2/w**2 * 2.8e6 * 5 ),DisPath) # B field contribution
     return PA
 
 def PhaseFactor(PV):
@@ -102,7 +102,7 @@ def DisPath():
 dispath = np.empty( 4*len(DisPath()) )
 if rank == 0:
     #dispath = DisPath()
-    dispath = np.load('data/constrained_0.4Hz.npy')
+    dispath = np.load('data/powerlaw_2_cutoff_0.1Hz_absDM.npy')
 comm.Bcast(dispath, root=0)
 
 #increasing density, do this if you're generating a new dispath
