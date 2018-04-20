@@ -1,4 +1,4 @@
-from __future__ import division
+#from __future__ import division
 import numpy as np
 #import matplotlib.pylab as plt
 import time
@@ -84,7 +84,7 @@ def Scan(begin, end, freq):
             # save intensity as well as spectrum
             lensed += [(s1**2).sum()]
             spec += [sf*PI]
-        print freq/10**6, i, begin, end, time.clock()
+        print(freq/10**6, i, begin, end, time.clock())
     return np.array(lensed)/norm, np.array(spec)
 
 # Gaussian DM
@@ -152,7 +152,7 @@ if rank == 0:
     scan = np.arange((len(gp)-1)/2, len(dispath) - (len(gp)-1)/2, (len(dispath)-(len(gp)-1)) // size )
     np.save(FileName+"Scan",scan)
     diff = scan[1] - scan[0]
-    print scan, diff
+    print(scan, diff)
 else:
     scan = None
     diff = None
@@ -166,7 +166,7 @@ diff = int(diff)
 mag, spec = Scan(scan,scan+diff,freq)
 # comm.Barrier()
 
-# print "process", rank, "has", mag
+# print( "process", rank, "has", mag)
 
 # if rank == 0 :
 #     magGathered = np.zeros(len(mag) * size)
