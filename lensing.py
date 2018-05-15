@@ -1,6 +1,6 @@
 import numpy as np
 import time
-#from mpi4py import MPI
+from mpi4py import MPI
 import sys
 
 #local modules
@@ -10,12 +10,12 @@ import pathint
 import dispath
 import geopath
 
-#comm = MPI.COMM_WORLD
-#size = comm.Get_size()
-#rank = comm.Get_rank()
+comm = MPI.COMM_WORLD
+size = comm.Get_size()
+rank = comm.Get_rank()
 
-fmin = 311.25*10**6 #Hz
-fban = 16*10**6 #Hz
+fmin = 311.25e6 #Hz
+fban = 16e6 #Hz
 #nfreq = int(sys.argv[1]) # which frequency band above 311.25 to scan
 #freq = fmin + nfreq * fban
 #fsample = 2*fban
@@ -28,7 +28,7 @@ fref = fmin #Hz
 #intime = 32/8000 # second/point
 
 # Output prefix
-FileName = "data/bgqtest_"
+FileName = "data/corrugated_sheet_"
 
 # Generates signal
 
@@ -42,10 +42,11 @@ FileName = "data/bgqtest_"
 
 # dispath
 
-dispath = np.empty( 4*len(dispath.generate()) )
+#dispath = np.empty( 4*len(dispath.generate()) )
+dispath = np.zeros(20000)
 if rank == 0:
     #dispath = dispath.generate()
-    dispath = np.load('data/B_null_v3_Dis.npy')
+    dispath = np.load('data/corrugated_sheet.npy')
 comm.Bcast(dispath, root=0)
 
 #increasing density, do this if you're generating a new dispath
@@ -69,7 +70,7 @@ l = len(sf)
 
 gp = geopath.generate(0)
 PA = phase.PhaseArray(l,gp,gp*0,fmin)
-PI = phase.PathInt(PA)
+PI = pathint.PathInt(PA)
 s1 = np.fft.irfft(sf*PI)
 norm = (s1**2).sum()
 

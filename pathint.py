@@ -3,6 +3,9 @@ Path integration
 """
 import numpy as np
 
+import phase
+import geopath
+
 def PathInt(PA):
     PathInt = []
     fRange, pathRange = np.shape(PA)
@@ -10,7 +13,7 @@ def PathInt(PA):
         Onef = 0
         IntRange, weight = FindIntRange(PA[i,:])
         for j in IntRange:
-            Onef += weight[j] * PhaseFactor(PA[i,j])
+            Onef += weight[j] * phase.PhaseFactor(PA[i,j])
         PathInt += [Onef]
     return np.array(PathInt)
 
@@ -31,8 +34,8 @@ def Scan(begin, end, freq):
     for i in scan:
         dp = dispath[i-(dens*500):i+(dens*500+1)]
         for j in res:
-            gp = GeoPath(j)
-            PA = PhaseArray(l,gp,dp,freq)
+            gp = geopath.generate(j)
+            PA = phase.PhaseArray(l,gp,dp,freq)
             PI = PathInt(PA)
             s1 = np.fft.irfft(sf*PI)
             # save intensity as well as spectrum

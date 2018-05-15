@@ -36,4 +36,4 @@ dne1   = 0.003*1e6/10
 
 def generate(center):
     gp = (T*(np.linspace(-3,3,num=6001,endpoint=True)-center*0.001))**2/(2*rf**2*freq)
-return gp
+    return gp

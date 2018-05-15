@@ -2,6 +2,9 @@
 Generates the phase function phi(f,x) as an array
 """
 import numpy as np
+fban = 16e6
+fref = 311.25e6
+
 def PhaseArray(SignalBand, GeoPath, DisPath, Freq):
     LG = len(GeoPath)
     LD = len(DisPath)
