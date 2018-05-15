@@ -16,8 +16,8 @@ rank = comm.Get_rank()
 
 fmin = 311.25e6 #Hz
 fban = 16e6 #Hz
-#nfreq = int(sys.argv[1]) # which frequency band above 311.25 to scan
-#freq = fmin + nfreq * fban
+nfreq = int(sys.argv[1]) # which frequency band above 311.25 to scan
+freq = fmin + nfreq * fban
 #fsample = 2*fban
 #Period = 1.6*10**(-3) #seconds
 #PulseWidth = Period/200
