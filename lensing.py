@@ -42,6 +42,25 @@ FileName = "data/corrugated_sheet_"
 
 # dispath
 
+def Scan(begin, end, freq):
+    scan = range(begin,end)
+    #res = np.linspace(-1/2,1/2,3,endpoint='true')[:-1] # divides each point into          subpoints of source position
+    res = np.array([0])
+    lensed = []
+    spec = []
+    for i in scan:
+        dp = dispath[i-3000:i+3000+1] #dispath[i-(dens*500):i+(dens*500+1)]
+        for j in res:
+            gp = geopath.generate(j)
+            PA = phase.PhaseArray(l,gp,dp,freq)
+            PI = pathint.PathInt(PA)
+            s1 = np.fft.irfft(sf*PI)
+            # save intensity as well as spectrum
+            lensed += [(s1**2).sum()]
+            spec += [sf*PI]
+        print(freq/10**6, i, begin, end, time.clock())
+    return np.array(lensed)/norm, np.array(spec)
+
 #dispath = np.empty( 4*len(dispath.generate()) )
 dispath = np.zeros(20000)
 if rank == 0:
@@ -96,7 +115,7 @@ scan = int(scan)
 diff = int(diff)
 
 # each processor will only process diff points for one particular frequency
-mag, spec = pathint.Scan(scan,scan+diff,freq)
+mag, spec = Scan(scan,scan+diff,freq)
 # comm.Barrier()
 
 # print( "process", rank, "has", mag)
