@@ -50,6 +50,6 @@ def generate_power_law(fs = 100, nrf = 100, amp = 5e-7, alpha = -2.0, k_outer = 
 
 def test():
     np.random.seed(0)
-    test_field = generate_power_law(fs = 10, nrf = 1, amp = 1, alpha = 1, k_outer = 0, k_inner = 1)
-    expected = np.array([0.82832789,  0.14841512, -0.21077723,  0.04852437, -0.10693545, -0.13751405, -0.06765225, -0.12474477, -0.47332513,  0.0956815 ])
-    assert np.sum(np.abs(test_field - expected)) < 1e-15, 'Bug in gaussian field generation'
+    test_field = generate_power_law(fs = 10, nrf = 1, amp = 1, alpha = 1, k_outer = 1e-5, k_inner = 1)
+    expected = np.array([0.8283278907397528, 0.14841512324238842, -0.2107772347532253, 0.048524374029767586, -0.10693544818931458, -0.13751405176832399, -0.06765225325959, -0.12474477219417185, -0.47332512506274416, 0.09568149721546117])
+    assert np.sum(np.abs(test_field - expected)) < 1e-10, 'Bug in gaussian field generation'
