@@ -23,8 +23,8 @@ def generate_power_law(fs = 100, nrf = 100, amp = 5e-7, alpha = -2.0, k_outer = 
     # nrf     : number of Fresnel scales to simulate
     # amp     : delay fluctuation amplitude
     # alpha   : power law exponent
-    # k_inner : inner cutoff scale
-    # k_outer : outer cutoff scale (doesn't really matter too much, needs to be small to maintain power law)
+    # k_inner : inner cutoff scale (at large k)
+    # k_outer : outer cutoff scale (at small k, doesn't really matter too much, needs to be small to maintain power law)
 
     nx = nrf*fs #number of points
     x  = np.linspace(0, nrf, nrf * fs)
@@ -47,3 +47,9 @@ def generate_power_law(fs = 100, nrf = 100, amp = 5e-7, alpha = -2.0, k_outer = 
     delay = np.fft.irfft(dk, norm = 'ortho')
 
     return delay
+
+def test():
+    np.random.seed(0)
+    test_field = generate_power_law(fs = 10, nrf = 1, amp = 1, alpha = 1, k_outer = 0, k_inner = 1)
+    expected = np.array([0.82832789,  0.14841512, -0.21077723,  0.04852437, -0.10693545, -0.13751405, -0.06765225, -0.12474477, -0.47332513,  0.0956815 ])
+    assert np.sum(np.abs(test_field - expected)) < 1e-15, 'Bug in gaussian field generation'
